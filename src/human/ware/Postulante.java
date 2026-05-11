@@ -3,112 +3,74 @@ package human.ware;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Representa a un candidato registrado en el portal HUMAN-Ware.
- *
- * Relaciones:
- *   - Composición 1-1 con PerfilDatos  (datos personales)
- *   - Composición 1-1..* con PostulanteSkill  (habilidades propias)
- *   - Asociación 1-1 con Degree  (un único título)
- *   - Asociación 1-1 con Usuario  (cuenta de acceso)
- *   - Asociación 1-1..3 con Application (solicitudes activas)
- */
+// Candidato registrado en el portal HUMAN-Ware.
 public class Postulante {
 
-    // ── Constantes ─────────────────────────────────────────────────────────
     private static final int MAX_SOLICITUDES_ACTIVAS = 3;
-
-    // ── Atributo de identidad ──────────────────────────────────────────────
     private static int contadorNro = 1;
-    private final int  nroPostulante;       // PK, autoincremental
 
-    // ── Perfil laboral ─────────────────────────────────────────────────────
-    private double            retribucionMinima;
-    private TipoJornada       tipoJornada;          // COMPLETA | PARCIAL | AMBAS
-    private boolean           disponibilidadViaje;
-    private String            vehiculo;             // null si no tiene
-    private Degree            titulacion;           // 1 título obligatorio
-    private List<PostulanteSkill> skills;           // al menos 1
+    private final int nroPostulante;
+    private double retribucionMinima;
+    private TipoJornada tipoJornada;
+    private boolean disponibilidadViaje;
+    private String vehiculo;
+    private Degree titulacion;
+    private List<PostulanteSkill> skills;
 
-    // ── Perfil personal (composición) ─────────────────────────────────────
+    // Composicion
     private PerfilDatos perfilDatos;
 
-    // ── Cuenta de acceso (asociación) ─────────────────────────────────────
+    // Asociacion con la cuenta de acceso
     private Usuario usuario;
 
-    // ── Historial de solicitudes ───────────────────────────────────────────
+    // Historial de solicitudes
     private List<Application> solicitudes;
 
-    // ── Constructor ────────────────────────────────────────────────────────
     public Postulante(double retribucionMinima, TipoJornada tipoJornada,
                       boolean disponibilidadViaje, String vehiculo,
                       Degree titulacion, PerfilDatos perfilDatos, Usuario usuario) {
-
-        if (titulacion == null)
-            throw new IllegalArgumentException("El postulante debe tener un título.");
-        if (perfilDatos == null)
-            throw new IllegalArgumentException("El perfil de datos es obligatorio.");
-        if (usuario == null)
-            throw new IllegalArgumentException("El postulante debe tener un usuario.");
-
-        this.nroPostulante      = contadorNro++;
-        this.retribucionMinima  = retribucionMinima;
-        this.tipoJornada        = tipoJornada;
+        this.nroPostulante = contadorNro++;
+        this.retribucionMinima = retribucionMinima;
+        this.tipoJornada = tipoJornada;
         this.disponibilidadViaje = disponibilidadViaje;
-        this.vehiculo           = vehiculo;
-        this.titulacion         = titulacion;
-        this.perfilDatos        = perfilDatos;
-        this.usuario            = usuario;
-        this.skills             = new ArrayList<>();
-        this.solicitudes        = new ArrayList<>();
+        this.vehiculo = vehiculo;
+        this.titulacion = titulacion;
+        this.perfilDatos = perfilDatos;
+        this.usuario = usuario;
+        this.skills = new ArrayList<>();
+        this.solicitudes = new ArrayList<>();
     }
 
-    // ── Gestión de Skills ──────────────────────────────────────────────────
-    /**
-     * Agrega una habilidad al perfil. No puede repetirse la misma Skill.
-     */
+    // ── Skills ────────────────────────────────────────────────────────────
+
     public void agregarSkill(PostulanteSkill ps) {
-        if (ps == null)
-            throw new IllegalArgumentException("PostulanteSkill no puede ser null.");
         if (skills.contains(ps))
             throw new IllegalStateException("Ya existe esa skill en el perfil.");
         skills.add(ps);
     }
 
-    /**
-     * Actualiza el nivel de una skill ya registrada.
-     */
     public void actualizarNivelSkill(Skill skill, int nuevoNivel) {
         skills.stream()
               .filter(ps -> ps.getSkill().equals(skill))
               .findFirst()
-              .orElseThrow(() -> new IllegalArgumentException("Skill no encontrada en el perfil."))
+              .orElseThrow(() -> new IllegalArgumentException("Skill no encontrada."))
               .setNivel(nuevoNivel);
     }
 
     public void eliminarSkill(Skill skill) {
         boolean eliminado = skills.removeIf(ps -> ps.getSkill().equals(skill));
         if (!eliminado)
-            throw new IllegalArgumentException("Skill no encontrada en el perfil.");
+            throw new IllegalArgumentException("Skill no encontrada.");
         if (skills.isEmpty())
             throw new IllegalStateException("El postulante debe tener al menos una skill.");
     }
 
-    // ── Gestión de Solicitudes (Application) ──────────────────────────────
-    /**
-     * Aplica a una oferta laboral creando una nueva Application.
-     * Regla de negocio: máximo 3 solicitudes activas simultáneas.
-     *
-     * @param oferta  la oferta a la que se postula
-     * @return la Application creada
-     */
+    // ── Solicitudes ───────────────────────────────────────────────────────
+
     public Application aplicarOferta(Oferta oferta) {
-        if (oferta == null)
-            throw new IllegalArgumentException("La oferta no puede ser null.");
         if (getSolicitudesActivas().size() >= MAX_SOLICITUDES_ACTIVAS)
-            throw new IllegalStateException(
-                "Límite alcanzado: no puede tener más de 3 solicitudes activas.");
-        // Verificar que no esté ya postulado a la misma oferta activa
+            throw new IllegalStateException("No puede tener mas de 3 solicitudes activas.");
+
         boolean yaPostulado = solicitudes.stream()
             .anyMatch(a -> a.getOferta().equals(oferta) && a.isActiva());
         if (yaPostulado)
@@ -119,23 +81,15 @@ public class Postulante {
         return app;
     }
 
-    /**
-     * Cancela una solicitud activa. La solicitud queda inactiva.
-     */
     public void cancelarSolicitud(Application app) {
-        if (app == null || !solicitudes.contains(app))
+        if (!solicitudes.contains(app))
             throw new IllegalArgumentException("Solicitud no encontrada.");
-        if (!app.isActiva())
-            throw new IllegalStateException("La solicitud ya está inactiva.");
         app.inactivar();
     }
 
-    // ── Métodos de selección / idoneidad ──────────────────────────────────
-    /**
-     * Verifica si el postulante cumple los requisitos mínimos de una oferta:
-     *   1. Tiene la titulación requerida.
-     *   2. Tiene todas las skills requeridas con nivel >= al mínimo.
-     */
+    // ── Idoneidad ─────────────────────────────────────────────────────────
+
+    // Verifica titulo requerido y nivel minimo en cada skill de la oferta
     public boolean cumpleRequisitos(Oferta oferta) {
         if (!this.titulacion.equals(oferta.getTitulacionRequerida()))
             return false;
@@ -149,13 +103,7 @@ public class Postulante {
         return true;
     }
 
-    /**
-     * Calcula el puntaje total del postulante para una oferta dada.
-     * Solo se suman las skills requeridas por la oferta (las demás no cuentan).
-     *
-     * @param oferta oferta para la cual se calcula el puntaje
-     * @return suma de niveles en las skills requeridas, 0 si no cumple requisitos
-     */
+    // Suma los niveles del postulante solo en las skills requeridas por la oferta
     public int calcularPuntaje(Oferta oferta) {
         if (!cumpleRequisitos(oferta)) return 0;
 
@@ -170,47 +118,38 @@ public class Postulante {
         return puntaje;
     }
 
-    // ── Getters ────────────────────────────────────────────────────────────
-    public int    getNroPostulante()        { return nroPostulante; }
-    public double getRetribucionMinima()    { return retribucionMinima; }
-    public TipoJornada getTipoJornada()     { return tipoJornada; }
-    public boolean isDisponibilidadViaje()  { return disponibilidadViaje; }
-    public String  getVehiculo()            { return vehiculo; }
-    public Degree  getTitulacion()          { return titulacion; }
-    public PerfilDatos getPerfilDatos()     { return perfilDatos; }
-    public Usuario getUsuario()             { return usuario; }
-    public String  getEmail()               { return perfilDatos.getEmail(); }
-    public String  getNombre()              { return perfilDatos.getNombre(); }
+    // ── Getters ───────────────────────────────────────────────────────────
 
-    public List<PostulanteSkill> getSkills() {
-        return List.copyOf(skills);     // inmutable para proteger encapsulamiento
-    }
+    public int getNroPostulante()              { return nroPostulante; }
+    public double getRetribucionMinima()       { return retribucionMinima; }
+    public TipoJornada getTipoJornada()        { return tipoJornada; }
+    public boolean isDisponibilidadViaje()     { return disponibilidadViaje; }
+    public String getVehiculo()                { return vehiculo; }
+    public Degree getTitulacion()              { return titulacion; }
+    public PerfilDatos getPerfilDatos()        { return perfilDatos; }
+    public Usuario getUsuario()                { return usuario; }
+    public String getNombre()                  { return perfilDatos.getNombre(); }
+    public String getEmail()                   { return perfilDatos.getEmail(); }
 
-    public List<Application> getSolicitudes() {
-        return List.copyOf(solicitudes);
-    }
+    public List<PostulanteSkill> getSkills()   { return List.copyOf(skills); }
+    public List<Application> getSolicitudes()  { return List.copyOf(solicitudes); }
 
     public List<Application> getSolicitudesActivas() {
-        return solicitudes.stream()
-                .filter(Application::isActiva)
-                .toList();
+        return solicitudes.stream().filter(Application::isActiva).toList();
     }
 
     public List<Application> getHistorialSolicitudes() {
         return List.copyOf(solicitudes);
     }
 
-    // ── Setters (actualización de perfil) ──────────────────────────────────
-    public void setRetribucionMinima(double r)          { this.retribucionMinima = r; }
-    public void setTipoJornada(TipoJornada tj)          { this.tipoJornada = tj; }
-    public void setDisponibilidadViaje(boolean d)       { this.disponibilidadViaje = d; }
-    public void setVehiculo(String v)                   { this.vehiculo = v; }
-    public void setTitulacion(Degree d) {
-        if (d == null) throw new IllegalArgumentException("Titulación no puede ser null.");
-        this.titulacion = d;
-    }
+    // ── Setters ───────────────────────────────────────────────────────────
 
-    // ── Object overrides ───────────────────────────────────────────────────
+    public void setRetribucionMinima(double r)   { this.retribucionMinima = r; }
+    public void setTipoJornada(TipoJornada tj)   { this.tipoJornada = tj; }
+    public void setDisponibilidadViaje(boolean d){ this.disponibilidadViaje = d; }
+    public void setVehiculo(String v)             { this.vehiculo = v; }
+    public void setTitulacion(Degree d)           { this.titulacion = d; }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
