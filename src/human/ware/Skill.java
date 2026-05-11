@@ -5,6 +5,7 @@ package human.ware;
  * IMPLEMENTACIÓN COMPLETA A CARGO DE DIVISIÓN 1.
  * Este archivo es un stub para que División 2 compile de forma independiente.
  */
+
 public class Skill {
     private int    codigo;
     private String nombre;

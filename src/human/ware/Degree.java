@@ -5,6 +5,7 @@ package human.ware;
  * IMPLEMENTACIÓN COMPLETA A CARGO DE DIVISIÓN 1.
  * Stub para compilación independiente de División 2.
  */
+
 public class Degree {
     private int    codigo;
     private String nombre;

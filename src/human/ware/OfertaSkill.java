@@ -5,6 +5,7 @@ package human.ware;
  * IMPLEMENTACIÓN COMPLETA A CARGO DE DIVISIÓN 1.
  * Stub para División 2.
  */
+
 public class OfertaSkill {
     private Skill skill;
     private int   nivelMinimo;

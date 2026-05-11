@@ -7,6 +7,7 @@ import java.util.List;
  * IMPLEMENTACIÓN COMPLETA A CARGO DE DIVISIÓN 1.
  * Stub mínimo para que División 2 compile independientemente.
  */
+
 public class Oferta {
     private String codigo;
     private String titulo;

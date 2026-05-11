@@ -10,7 +10,7 @@ public class Main {
         System.out.println("=== HUMAN-Ware — Prueba División 2 ===\n");
 
         // ── 1. Catálogos (provistos por División 1) ────────────────────────
-        Skill inglés  = new Skill(1, "Inglés",  "Idioma inglés");
+        Skill ingles  = new Skill(1, "Inglés",  "Idioma ingles");
         Skill java    = new Skill(2, "Java",    "Programación Java");
         Skill python  = new Skill(3, "Python",  "Programación Python");
 
@@ -20,20 +20,14 @@ public class Main {
         // ── 2. Crear usuario y postulante ──────────────────────────────────
         Usuario u1 = new Usuario("jperez", "pass123", "jperez@mail.com");
 
-        PerfilDatos perfil1 = new PerfilDatos(
-            "20-12345678-9", "M",
-            LocalDate.of(1998, 5, 14),
-            "Juan Pérez", "jperez@mail.com", "351-1234567"
-        );
+        PerfilDatos perfil1 = new PerfilDatos
+        ("20-12345678-9", "M", LocalDate.of(1998, 5, 14), "Juan Pérez", "jperez@mail.com", "351-1234567");
 
-        Postulante p1 = new Postulante(
-            900_000.0, TipoJornada.AMBAS,
-            true, "Auto",
-            ingSistemas, perfil1, u1
-        );
+        Postulante p1 = new Postulante
+        (900_000.0, TipoJornada.AMBAS, true, "Auto", ingSistemas, perfil1, u1);
 
         // Agregar skills
-        p1.agregarSkill(new PostulanteSkill(inglés, 4));
+        p1.agregarSkill(new PostulanteSkill(ingles, 4));
         p1.agregarSkill(new PostulanteSkill(java,   5));
         p1.agregarSkill(new PostulanteSkill(python,  3));
 
@@ -44,26 +38,20 @@ public class Main {
         // ── 3. Segundo postulante para comparar ranking ────────────────────
         Usuario u2 = new Usuario("mgarcia", "pass456", "mgarcia@mail.com");
 
-        PerfilDatos perfil2 = new PerfilDatos(
-            "27-87654321-3", "F",
-            LocalDate.of(1995, 8, 22),
-            "María García", "mgarcia@mail.com", "351-7654321"
-        );
+        PerfilDatos perfil2 = new PerfilDatos
+        ("27-87654321-3", "F", LocalDate.of(1995, 8, 22), "María García", "mgarcia@mail.com", "351-7654321");
 
-        Postulante p2 = new Postulante(
-            850_000.0, TipoJornada.COMPLETA,
-            false, null,
-            ingSistemas, perfil2, u2
-        );
+        Postulante p2 = new Postulante
+        (850_000.0, TipoJornada.COMPLETA, false, null, ingSistemas, perfil2, u2);
 
-        p2.agregarSkill(new PostulanteSkill(inglés, 5));
+        p2.agregarSkill(new PostulanteSkill(ingles, 5));
         p2.agregarSkill(new PostulanteSkill(java,   4));
 
         System.out.println("Postulante 2 creado: " + p2 + "\n");
 
         // ── 4. Oferta laboral (stub, provista por División 1) ──────────────
         List<OfertaSkill> reqSkills = List.of(
-            new OfertaSkill(inglés, 3),   // mínimo nivel 3 en Inglés
+            new OfertaSkill(ingles, 3),   // mínimo nivel 3 en Inglés
             new OfertaSkill(java,   4)    // mínimo nivel 4 en Java
         );
 
