@@ -37,6 +37,6 @@ public class PostulanteSkill {
 
     @Override
     public String toString() {
-        return "PostulanteSkill{skill=" + skill.getNombre() + ", nivel=" + nivel + "}";
+        return "PostulanteSkill{skill= " + skill.getNombre() + ", nivel= " + nivel + "}";
     }
 }

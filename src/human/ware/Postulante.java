@@ -162,10 +162,10 @@ public class Postulante {
 
     @Override
     public String toString() {
-        return "Postulante{nro=" + nroPostulante +
-               ", nombre='" + getNombre() + "'" +
-               ", titulacion='" + titulacion.getNombre() + "'" +
-               ", skills=" + skills.size() +
-               ", solicitudesActivas=" + getSolicitudesActivas().size() + "}";
+        return "Postulante{nro= " + nroPostulante +
+               ", nombre= '" + getNombre() + "'" +
+               ", titulacion= '" + titulacion.getNombre() + "'" +
+               ", skills= " + skills.size() +
+               ", solicitudesActivas= " + getSolicitudesActivas().size() + "}";
     }
 }
