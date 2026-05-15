@@ -13,8 +13,13 @@ public class Application {
     private final LocalDate fechaCreacion;
     private LocalDate fechaContrato;
     private EstadoApplication estado;
+    
 
     public Application(Oferta oferta, Postulante postulante) {
+        
+        if (oferta == null || postulante == null)
+            throw new IllegalArgumentException("Oferta y Postulante son obligatorios.");
+        
         this.id = contadorId++;
         this.oferta = oferta;
         this.postulante = postulante;
