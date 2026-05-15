@@ -17,7 +17,7 @@ public class Postulante {
     private Degree titulacion;
     private List<PostulanteSkill> skills;
 
-    // Composicion
+    // Composicion 1-1
     private PerfilDatos perfilDatos;
 
     // Asociacion con la cuenta de acceso
@@ -29,16 +29,16 @@ public class Postulante {
     public Postulante(double retribucionMinima, TipoJornada tipoJornada,
                       boolean disponibilidadViaje, String vehiculo,
                       Degree titulacion, PerfilDatos perfilDatos, Usuario usuario) {
-        this.nroPostulante = contadorNro++;
-        this.retribucionMinima = retribucionMinima;
-        this.tipoJornada = tipoJornada;
+        this.nroPostulante      = contadorNro++;
+        this.retribucionMinima  = retribucionMinima;
+        this.tipoJornada        = tipoJornada;
         this.disponibilidadViaje = disponibilidadViaje;
-        this.vehiculo = vehiculo;
-        this.titulacion = titulacion;
-        this.perfilDatos = perfilDatos;
-        this.usuario = usuario;
-        this.skills = new ArrayList<>();
-        this.solicitudes = new ArrayList<>();
+        this.vehiculo           = vehiculo;
+        this.titulacion         = titulacion;
+        this.perfilDatos        = perfilDatos;
+        this.usuario            = usuario;
+        this.skills             = new ArrayList<>();
+        this.solicitudes        = new ArrayList<>();
     }
 
     // ── Skills ────────────────────────────────────────────────────────────
@@ -50,11 +50,13 @@ public class Postulante {
     }
 
     public void actualizarNivelSkill(Skill skill, int nuevoNivel) {
-        skills.stream()
-              .filter(ps -> ps.getSkill().equals(skill))
-              .findFirst()
-              .orElseThrow(() -> new IllegalArgumentException("Skill no encontrada."))
-              .setNivel(nuevoNivel);
+        for (PostulanteSkill ps : skills) {
+            if (ps.getSkill().equals(skill)) {
+                ps.setNivel(nuevoNivel);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Skill no encontrada.");
     }
 
     public void eliminarSkill(Skill skill) {
@@ -71,10 +73,11 @@ public class Postulante {
         if (getSolicitudesActivas().size() >= MAX_SOLICITUDES_ACTIVAS)
             throw new IllegalStateException("No puede tener mas de 3 solicitudes activas.");
 
-        boolean yaPostulado = solicitudes.stream()
-            .anyMatch(a -> a.getOferta().equals(oferta) && a.isActiva());
-        if (yaPostulado)
-            throw new IllegalStateException("Ya tiene una solicitud activa para esta oferta.");
+        // Verifica que no este ya postulado activo a la misma oferta
+        for (Application a : solicitudes) {
+            if (a.getOferta().equals(oferta) && a.isActiva())
+                throw new IllegalStateException("Ya tiene una solicitud activa para esta oferta.");
+        }
 
         Application app = new Application(oferta, this);
         solicitudes.add(app);
@@ -91,13 +94,19 @@ public class Postulante {
 
     // Verifica titulo requerido y nivel minimo en cada skill de la oferta
     public boolean cumpleRequisitos(Oferta oferta) {
+        // 1. Debe tener la titulacion requerida
         if (!this.titulacion.equals(oferta.getTitulacionRequerida()))
             return false;
 
+        // 2. Para cada skill requerida, debe tenerla con nivel suficiente
         for (OfertaSkill os : oferta.getSkillsRequeridas()) {
-            boolean cumple = skills.stream()
-                .filter(ps -> ps.getSkill().equals(os.getSkill()))
-                .anyMatch(ps -> ps.cumpleMinimo(os.getNivelMinimo()));
+            boolean cumple = false;
+            for (PostulanteSkill ps : skills) {
+                if (ps.getSkill().equals(os.getSkill()) && ps.cumpleMinimo(os.getNivelMinimo())) {
+                    cumple = true;
+                    break;
+                }
+            }
             if (!cumple) return false;
         }
         return true;
@@ -109,33 +118,38 @@ public class Postulante {
 
         int puntaje = 0;
         for (OfertaSkill os : oferta.getSkillsRequeridas()) {
-            puntaje += skills.stream()
-                .filter(ps -> ps.getSkill().equals(os.getSkill()))
-                .mapToInt(PostulanteSkill::getNivel)
-                .findFirst()
-                .orElse(0);
+            for (PostulanteSkill ps : skills) {
+                if (ps.getSkill().equals(os.getSkill())) {
+                    puntaje += ps.getNivel();
+                    break;
+                }
+            }
         }
         return puntaje;
     }
 
     // ── Getters ───────────────────────────────────────────────────────────
 
-    public int getNroPostulante()              { return nroPostulante; }
-    public double getRetribucionMinima()       { return retribucionMinima; }
-    public TipoJornada getTipoJornada()        { return tipoJornada; }
-    public boolean isDisponibilidadViaje()     { return disponibilidadViaje; }
-    public String getVehiculo()                { return vehiculo; }
-    public Degree getTitulacion()              { return titulacion; }
-    public PerfilDatos getPerfilDatos()        { return perfilDatos; }
-    public Usuario getUsuario()                { return usuario; }
-    public String getNombre()                  { return perfilDatos.getNombre(); }
-    public String getEmail()                   { return perfilDatos.getEmail(); }
+    public int getNroPostulante()             { return nroPostulante; }
+    public double getRetribucionMinima()      { return retribucionMinima; }
+    public TipoJornada getTipoJornada()       { return tipoJornada; }
+    public boolean isDisponibilidadViaje()    { return disponibilidadViaje; }
+    public String getVehiculo()               { return vehiculo; }
+    public Degree getTitulacion()             { return titulacion; }
+    public PerfilDatos getPerfilDatos()       { return perfilDatos; }
+    public Usuario getUsuario()               { return usuario; }
+    public String getNombre()                 { return perfilDatos.getNombre(); }
+    public String getEmail()                  { return perfilDatos.getEmail(); }
 
-    public List<PostulanteSkill> getSkills()   { return List.copyOf(skills); }
-    public List<Application> getSolicitudes()  { return List.copyOf(solicitudes); }
+    public List<PostulanteSkill> getSkills()  { return List.copyOf(skills); }
+    public List<Application> getSolicitudes() { return List.copyOf(solicitudes); }
 
     public List<Application> getSolicitudesActivas() {
-        return solicitudes.stream().filter(Application::isActiva).toList();
+        List<Application> activas = new ArrayList<>();
+        for (Application a : solicitudes) {
+            if (a.isActiva()) activas.add(a);
+        }
+        return activas;
     }
 
     public List<Application> getHistorialSolicitudes() {
@@ -144,9 +158,9 @@ public class Postulante {
 
     // ── Setters ───────────────────────────────────────────────────────────
 
-    public void setRetribucionMinima(double r)   { this.retribucionMinima = r; }
-    public void setTipoJornada(TipoJornada tj)   { this.tipoJornada = tj; }
-    public void setDisponibilidadViaje(boolean d){ this.disponibilidadViaje = d; }
+    public void setRetribucionMinima(double r)    { this.retribucionMinima = r; }
+    public void setTipoJornada(TipoJornada tj)    { this.tipoJornada = tj; }
+    public void setDisponibilidadViaje(boolean d) { this.disponibilidadViaje = d; }
     public void setVehiculo(String v)             { this.vehiculo = v; }
     public void setTitulacion(Degree d)           { this.titulacion = d; }
 
@@ -162,10 +176,10 @@ public class Postulante {
 
     @Override
     public String toString() {
-        return "Postulante{nro= " + nroPostulante +
-               ", nombre= '" + getNombre() + "'" +
-               ", titulacion= '" + titulacion.getNombre() + "'" +
-               ", skills= " + skills.size() +
-               ", solicitudesActivas= " + getSolicitudesActivas().size() + "}";
+        return "Postulante{nro=" + nroPostulante +
+               ", nombre='" + getNombre() + "'" +
+               ", titulacion='" + titulacion.getNombre() + "'" +
+               ", skills=" + skills.size() +
+               ", solicitudesActivas=" + getSolicitudesActivas().size() + "}";
     }
 }
