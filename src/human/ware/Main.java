@@ -6,96 +6,195 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        
-        System.out.println("=== HUMAN-Ware -- Prueba Division 2 ===\n");
 
-        // ── 1. Catalogos (provistos por Division 1) ────────────────────────
-        Skill ingles  = new Skill(1, "Ingles",  "Idioma ingles");
-        Skill java    = new Skill(2, "Java",    "Programacion Java");
-        Skill python  = new Skill(3, "Python",  "Programacion Python");
+        System.out.println("========================================");
+        System.out.println("   HUMAN-Ware - Division 2 - Grupo 25  ");
+        System.out.println("========================================\n");
 
-        Degree ingSistemas = new Degree(1, "Ingeniero en Sistemas", "");
-        Degree tecnico     = new Degree(2, "Técnico en PC",         "");
+        // ================================================================
+        // 1. CATALOGOS (en el proyecto real los provee Division 1)
+        // ================================================================
 
-        // ── 2. Crear usuario y postulante ──────────────────────────────────
-        Usuario u1 = new Usuario("jperez", "pass123", "jperez@mail.com");
+        Skill java      = new Skill(1, "Java",    "Programacion Java");
+        Skill sql       = new Skill(2, "SQL",     "Bases de datos");
+        Skill python    = new Skill(3, "Python",  "Programacion Python");
+        Skill ingles    = new Skill(4, "Ingles",  "Idioma ingles");
+        Skill redes     = new Skill(5, "Redes",   "Administracion de redes");
+        Skill testing   = new Skill(6, "Testing", "Pruebas de software");
 
-        PerfilDatos perfil1 = new PerfilDatos
-        ("20-12345678-9", "M", LocalDate.of(1998, 5, 14), "Juan Perez", "jperez@mail.com", "351-1234567");
+        Degree tds      = new Degree(1, "Tecnicatura en Desarrollo de Software", "");
+        Degree ingSis   = new Degree(2, "Ingeniero en Sistemas", "");
+        Degree tester   = new Degree(3, "Tester", "");
 
-        Postulante p1 = new Postulante
-        (900_000.0, TipoJornada.AMBAS, true, "Auto", ingSistemas, perfil1, u1);
+        // ================================================================
+        // 2. USUARIOS
+        // ================================================================
 
-        // Agregar skills
-        p1.agregarSkill(new PostulanteSkill(ingles, 4));
-        p1.agregarSkill(new PostulanteSkill(java,   5));
-        p1.agregarSkill(new PostulanteSkill(python,  3));
+        Usuario uYamil     = new Usuario("ybarbeito",  "pass123", "yamilbarbeito5@gmail.com");
+        Usuario uEsteban   = new Usuario("eredon",     "pass456", "esteban.redon@gmail.com");
+        Usuario uCristian  = new Usuario("csoria",     "pass789", "cristian.soria@gmail.com");
+        Usuario uAtahualpa = new Usuario("ablanco",    "pass000", "atahualpa.blanco@gmail.com");
 
-        System.out.println("Postulante creado: " + p1);
-        System.out.println("Skills: " + p1.getSkills());
-        System.out.println("Edad: " + p1.getPerfilDatos().getEdad() + " anios\n");
+        // ================================================================
+        // 3. PERFILES PERSONALES
+        // ================================================================
 
-        // ── 3. Segundo postulante para comparar ranking ────────────────────
-        Usuario u2 = new Usuario("mgarcia", "pass456", "mgarcia@mail.com");
-
-        PerfilDatos perfil2 = new PerfilDatos
-        ("27-87654321-3", "F", LocalDate.of(1995, 8, 22), "Maria Garcia", "mgarcia@mail.com", "351-7654321");
-
-        Postulante p2 = new Postulante
-        (850_000.0, TipoJornada.COMPLETA, false, null, ingSistemas, perfil2, u2);
-
-        p2.agregarSkill(new PostulanteSkill(ingles, 5));
-        p2.agregarSkill(new PostulanteSkill(java,   4));
-
-        System.out.println("Postulante 2 creado: " + p2 + "\n");
-
-        // ── 4. Oferta laboral (stub, provista por División 1) ──────────────
-        List<OfertaSkill> reqSkills = List.of(
-            new OfertaSkill(ingles, 3),   // mínimo nivel 3 en Inglés
-            new OfertaSkill(java,   4)    // mínimo nivel 4 en Java
+        PerfilDatos perfilYamil = new PerfilDatos(
+            "20-45563425-9", "M", LocalDate.of(2004, 5, 1),
+            "Barbeito Yamil Emmanuel", "yamilbarbeito5@gmail.com", "2664-45563425"
+        );
+        PerfilDatos perfilEsteban = new PerfilDatos(
+            "20-48112233-4", "M", LocalDate.of(2005, 7, 12),
+            "Redon Esteban", "esteban.redon@gmail.com", "2664-38112233"
+        );
+        PerfilDatos perfilCristian = new PerfilDatos(
+            "20-41556677-1", "M", LocalDate.of(2003, 7, 15),
+            "Soria Cristian", "cristian.soria@gmail.com", "2664-41556677"
+        );
+        PerfilDatos perfilAtahualpa = new PerfilDatos(
+            "20-43998811-6", "M", LocalDate.of(2004, 11, 30),
+            "Blanco Atahualpa", "atahualpa.blanco@gmail.com", "2664-43998811"
         );
 
-        Oferta oferta1 = new Oferta ("OF-001", "Desarrollador Java Senior",ingSistemas, reqSkills);
+        // ================================================================
+        // 4. POSTULANTES
+        // ================================================================
 
-        // ── 5. Verificar requisitos ────────────────────────────────────────
-        System.out.println("--- Verificacion de requisitos ---");
-        System.out.println(p1.getNombre() + " cumple requisitos: " + p1.cumpleRequisitos(oferta1));
-        System.out.println(p2.getNombre() + " cumple requisitos: " + p2.cumpleRequisitos(oferta1));
+        Postulante yamil = new Postulante(
+            600_000.0, TipoJornada.AMBAS, true, "Moto", tds, perfilYamil, uYamil
+        );
+        yamil.agregarSkill(new PostulanteSkill(java,   5));
+        yamil.agregarSkill(new PostulanteSkill(sql,    4));
+        yamil.agregarSkill(new PostulanteSkill(ingles, 3));
 
-        // ── 6. Calcular puntaje ────────────────────────────────────────────
-        System.out.println("\n--- Puntajes para OF-001 ---");
-        int puntajeP1 = p1.calcularPuntaje(oferta1);
-        int puntajeP2 = p2.calcularPuntaje(oferta1);
-        System.out.println(p1.getNombre() + ": " + puntajeP1 + " pts  (Ingles=4 + Java=5)");
-        System.out.println(p2.getNombre() + ": " + puntajeP2 + " pts  (Ingles=5 + Java=4)");
+        Postulante esteban = new Postulante(
+            550_000.0, TipoJornada.COMPLETA, false, "Auto", tds, perfilEsteban, uEsteban
+        );
+        esteban.agregarSkill(new PostulanteSkill(java,   4));
+        esteban.agregarSkill(new PostulanteSkill(python, 5));
+        esteban.agregarSkill(new PostulanteSkill(sql,    3));
 
-        String ganador = puntajeP1 >= puntajeP2
-            ? p1.getNombre() : p2.getNombre();
-        System.out.println("Mejor candidato: " + ganador + "\n");
+        Postulante cristian = new Postulante(
+            500_000.0, TipoJornada.PARCIAL, true, null, tester, perfilCristian, uCristian
+        );
+        cristian.agregarSkill(new PostulanteSkill(testing, 5));
+        cristian.agregarSkill(new PostulanteSkill(ingles,  4));
+        cristian.agregarSkill(new PostulanteSkill(sql,     2));
 
-        // ── 7. Postulaciones ───────────────────────────────────────────────
-        System.out.println("--- Postulaciones ---");
-        Application app1 = p1.aplicarOferta(oferta1);
-        System.out.println("Solicitud creada: " + app1);
-        System.out.println("Solicitudes activas de " + p1.getNombre() + ": "
-                           + p1.getSolicitudesActivas().size());
+        Postulante atahualpa = new Postulante(
+            650_000.0, TipoJornada.COMPLETA, true, "Auto", ingSis, perfilAtahualpa, uAtahualpa
+        );
+        atahualpa.agregarSkill(new PostulanteSkill(redes,  5));
+        atahualpa.agregarSkill(new PostulanteSkill(java,   3));
+        atahualpa.agregarSkill(new PostulanteSkill(ingles, 4));
 
-        // Cancelar solicitud
-        p1.cancelarSolicitud(app1);
-        System.out.println("Solicitud cancelada. Activas: "
-                           + p1.getSolicitudesActivas().size());
+        // ================================================================
+        // 5. OFERTAS LABORALES (publicadas por Division 1)
+        // ================================================================
 
-        // Re-postular
-        Application app2 = p1.aplicarOferta(oferta1);
-        System.out.println("Nueva solicitud: " + app2);
+        Oferta ofertaJava = new Oferta("OF-001", "Desarrollador Java Jr", tds,
+            List.of(new OfertaSkill(java, 4), new OfertaSkill(sql, 3))
+        );
+        Oferta ofertaTester = new Oferta("OF-002", "Tester QA", tester,
+            List.of(new OfertaSkill(testing, 4), new OfertaSkill(ingles, 3))
+        );
+        Oferta ofertaPython = new Oferta("OF-003", "Desarrollador Python", tds,
+            List.of(new OfertaSkill(python, 4), new OfertaSkill(sql, 2))
+        );
 
-        // Simular contratación
-        app2.asignarFechaContrato(LocalDate.now());
-        System.out.println("Estado tras cobertura: " + app2.getEstado());
-        System.out.println("Fecha contrato: " + app2.getFechaContrato());
+        // ================================================================
+        // 6. RANKING DE CANDIDATOS POR OFERTA
+        // ================================================================
 
-        System.out.println("\n=== Prueba completada con Exito ===");
-        
+        System.out.println("--- Ranking: " + ofertaJava.getTitulo() + " ---");
+        mostrarRanking(ofertaJava, yamil, esteban, cristian, atahualpa);
+
+        System.out.println("\n--- Ranking: " + ofertaTester.getTitulo() + " ---");
+        mostrarRanking(ofertaTester, yamil, esteban, cristian, atahualpa);
+
+        System.out.println("\n--- Ranking: " + ofertaPython.getTitulo() + " ---");
+        mostrarRanking(ofertaPython, yamil, esteban, cristian, atahualpa);
+
+        // ================================================================
+        // 7. POSTULACIONES
+        // ================================================================
+
+        System.out.println("\n--- Postulaciones ---");
+
+        Application app1 = yamil.aplicarOferta(ofertaJava);
+        Application app2 = yamil.aplicarOferta(ofertaPython);
+        System.out.println(yamil.getNombre() + " aplico a: " + app1.getOferta().getTitulo());
+        System.out.println(yamil.getNombre() + " aplico a: " + app2.getOferta().getTitulo());
+        System.out.println("Activas de " + yamil.getNombre() + ": " + yamil.getSolicitudesActivas().size());
+
+        Application app3 = esteban.aplicarOferta(ofertaJava);
+        Application app4 = esteban.aplicarOferta(ofertaPython);
+        System.out.println(esteban.getNombre() + " aplico a: " + app3.getOferta().getTitulo());
+        System.out.println(esteban.getNombre() + " aplico a: " + app4.getOferta().getTitulo());
+
+        Application app5 = cristian.aplicarOferta(ofertaTester);
+        System.out.println(cristian.getNombre() + " aplico a: " + app5.getOferta().getTitulo());
+
+        // Yamil cancela una solicitud
+        yamil.cancelarSolicitud(app2);
+        System.out.println("\n" + yamil.getNombre() + " cancelo: " + app2.getOferta().getTitulo());
+        System.out.println("Activas de " + yamil.getNombre() + ": " + yamil.getSolicitudesActivas().size());
+
+        // Empresa cubre el puesto con Yamil
+        app1.asignarFechaContrato(LocalDate.now());
+        System.out.println("\nPuesto cubierto! " + yamil.getNombre()
+            + " contratado para: " + app1.getOferta().getTitulo());
+        System.out.println("Estado:         " + app1.getEstado());
+        System.out.println("Fecha contrato: " + app1.getFechaContrato());
+
+        // Historial de Yamil
+        System.out.println("\n--- Historial de " + yamil.getNombre() + " ---");
+        for (Application a : yamil.getHistorialSolicitudes()) {
+            System.out.println("  " + a.getOferta().getTitulo()
+                + " | " + a.getEstado()
+                + " | creada: " + a.getFechaCreacion());
+        }
+
+        // ================================================================
+        // 8. PERFILES DEL GRUPO
+        // ================================================================
+
+        System.out.println("\n--- Perfiles del Grupo 25 ---");
+        mostrarPerfil(yamil);
+        mostrarPerfil(esteban);
+        mostrarPerfil(cristian);
+        mostrarPerfil(atahualpa);
+
+        System.out.println("========================================");
+        System.out.println("   Prueba completada con exito          ");
+        System.out.println("========================================");
     }
-    
+
+    // ── Helpers ───────────────────────────────────────────────────────────
+
+    static void mostrarRanking(Oferta oferta, Postulante... postulantes) {
+        System.out.println("  Titulo requerido: " + oferta.getTitulacionRequerida().getNombre());
+        for (Postulante p : postulantes) {
+            boolean cumple = p.cumpleRequisitos(oferta);
+            int puntaje    = p.calcularPuntaje(oferta);
+            System.out.println("  " + p.getNombre()
+                + " -> cumple: " + cumple
+                + (cumple ? " | puntaje: " + puntaje : ""));
+        }
+    }
+
+    static void mostrarPerfil(Postulante p) {
+        PerfilDatos d = p.getPerfilDatos();
+        System.out.println("  Nombre:   " + d.getNombre());
+        System.out.println("  CUIL:     " + d.getCuil());
+        System.out.println("  Email:    " + d.getEmail());
+        System.out.println("  Telefono: " + d.getTelefono());
+        System.out.println("  Edad:     " + d.getEdad() + " anios");
+        System.out.println("  Titulo:   " + p.getTitulacion().getNombre());
+        System.out.println("  Skills:   " + p.getSkills());
+        System.out.println("  Jornada:  " + p.getTipoJornada());
+        System.out.println("  Viaje:    " + (p.isDisponibilidadViaje() ? "Si" : "No"));
+        System.out.println("  Vehiculo: " + (p.getVehiculo() != null ? p.getVehiculo() : "No tiene"));
+        System.out.println();
+    }
 }
