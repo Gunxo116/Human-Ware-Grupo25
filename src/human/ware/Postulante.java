@@ -3,7 +3,6 @@ package human.ware;
 import java.util.ArrayList;
 import java.util.List;
 
-// Candidato registrado en el portal HUMAN-Ware.
 public class Postulante {
 
     private static final int MAX_SOLICITUDES_ACTIVAS = 3;
